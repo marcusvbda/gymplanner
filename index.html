@@ -24,6 +24,7 @@
     --acc:#ff7a45;
     --fig:#cfd6e2;
     --r:16px;
+    --navh:60px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
@@ -32,7 +33,7 @@
     color:var(--txt);
     font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     font-size:16px;line-height:1.35;
-    padding-bottom:calc(100px + env(safe-area-inset-bottom));
+    padding-bottom:calc(100px + var(--navh) + env(safe-area-inset-bottom));
     -webkit-font-smoothing:antialiased;
   }
   header{
@@ -99,10 +100,10 @@
   .tools button:active{color:var(--txt);border-color:var(--acc)}
 
   .timer{
-    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    position:fixed;left:0;right:0;bottom:var(--navh);z-index:30;
     background:rgba(22,27,35,.94);backdrop-filter:blur(12px);
     border-top:1px solid var(--line);
-    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    padding:10px 16px;
     display:flex;align-items:center;gap:9px;
   }
   .clock{
@@ -116,11 +117,29 @@
   }
   .timer button:active{background:var(--acc);color:#0f1218;border-color:var(--acc)}
   .timer .stop{flex:0 0 52px;color:var(--dim)}
+
+  .view[hidden]{display:none}
+
+  .bottomnav{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    display:flex;
+    background:rgba(22,27,35,.94);backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+  .nav-btn{
+    flex:1;background:none;border:0;color:var(--dim);
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    font:inherit;font-size:11px;padding:4px 0;cursor:pointer;
+  }
+  .nav-btn svg{width:22px;height:22px}
+  .nav-btn[aria-selected="true"]{color:var(--acc)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 
+<div id="view-treino" class="view">
 <header>
   <div class="days" id="days" role="tablist"></div>
   <div class="title">
@@ -151,6 +170,30 @@
   <button data-t="180">3min</button>
   <button class="stop" id="stop" aria-label="Parar o descanso">■</button>
 </div>
+</div>
+
+<div id="view-agua" class="view" hidden></div>
+<div id="view-proteina" class="view" hidden></div>
+<div id="view-calorias" class="view" hidden></div>
+
+<nav class="bottomnav" id="bottomnav">
+  <button class="nav-btn" data-view="treino" aria-selected="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M4 12v3M4 12V9M20 12v3M20 12V9M2 12h2M20 12h2M7 8v8M17 8v8"/></svg>
+    <span>Treino</span>
+  </button>
+  <button class="nav-btn" data-view="agua" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg>
+    <span>Água</span>
+  </button>
+  <button class="nav-btn" data-view="proteina" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4a4 4 0 0 1 4 4c0 2-2 3-4 5s-3 4-5 4a4 4 0 0 1-4-4c0-2 2-3 4-5s3-4 5-4z"/><path d="M6 18l-2 2"/></svg>
+    <span>Proteína</span>
+  </button>
+  <button class="nav-btn" data-view="calorias" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2s-5 5.5-5 10a5 5 0 0 0 10 0c0-1.5-1-2.5-1-2.5s0 2-2 2-2-2.5-1-4S12 2 12 2z"/></svg>
+    <span>Calorias</span>
+  </button>
+</nav>
 
 <script>
 /* ========== ícones ========== */
@@ -230,6 +273,16 @@ const I = {
 const CHAVE = 'treino-v1';
 const HOJE  = new Date().toISOString().slice(0,10);
 const $ = s => document.querySelector(s);
+
+/* ========== navegação ========== */
+function mostrarView(nome){
+  document.querySelectorAll('.view').forEach(v => v.hidden = v.id !== `view-${nome}`);
+  document.querySelectorAll('.nav-btn').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view===nome)));
+}
+$('#bottomnav').addEventListener('click', e=>{
+  const b = e.target.closest('.nav-btn'); if(!b) return;
+  mostrarView(b.dataset.view);
+});
 
 let PLANO = [], atual = null;
 let ST = { carga:{}, done:{} };
