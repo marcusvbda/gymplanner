@@ -23,6 +23,7 @@
     --dim:#8a93a3;
     --acc:#ff7a45;
     --fig:#cfd6e2;
+    --over:#ff4d4d;
     --r:16px;
     --navh:60px;
   }
@@ -134,7 +135,7 @@
   }
   .nav-btn svg{width:22px;height:22px}
   .nav-btn[aria-selected="true"]{color:var(--acc)}
-  .counter{padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px}
+  .counter{padding:calc(16px + env(safe-area-inset-top)) 16px 24px;display:flex;flex-direction:column;gap:16px}
   .counter h1{margin:0;font-size:22px;letter-spacing:-.02em}
   .counter-goal{display:flex;align-items:center;gap:8px;color:var(--dim);font-size:14px}
   .counter-goal input{
@@ -144,7 +145,7 @@
   .counter-value{font-variant-numeric:tabular-nums;font-size:32px;font-weight:700;letter-spacing:-.02em}
   .counter-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
   .counter-bar i{display:block;height:100%;width:0;background:var(--acc);border-radius:99px;transition:width .3s ease}
-  .counter-bar i.over{background:#ff4d4d}
+  .counter-bar i.over{background:var(--over)}
   .counter-status{color:var(--dim);font-size:14px;min-height:18px}
   .counter-shortcuts{display:flex;gap:8px;flex-wrap:wrap}
   .counter-shortcuts button{
@@ -203,24 +204,24 @@
 </div>
 </div>
 
-<div id="view-agua" class="view" hidden></div>
-<div id="view-proteina" class="view" hidden></div>
-<div id="view-calorias" class="view" hidden></div>
+<div id="view-agua" class="view" role="tabpanel" hidden></div>
+<div id="view-proteina" class="view" role="tabpanel" hidden></div>
+<div id="view-calorias" class="view" role="tabpanel" hidden></div>
 
-<nav class="bottomnav" id="bottomnav">
-  <button class="nav-btn" data-view="treino" aria-selected="true">
+<nav class="bottomnav" id="bottomnav" role="tablist">
+  <button class="nav-btn" role="tab" data-view="treino" aria-selected="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M4 12v3M4 12V9M20 12v3M20 12V9M2 12h2M20 12h2M7 8v8M17 8v8"/></svg>
     <span>Treino</span>
   </button>
-  <button class="nav-btn" data-view="agua" aria-selected="false">
+  <button class="nav-btn" role="tab" data-view="agua" aria-selected="false">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg>
     <span>Água</span>
   </button>
-  <button class="nav-btn" data-view="proteina" aria-selected="false">
+  <button class="nav-btn" role="tab" data-view="proteina" aria-selected="false">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4a4 4 0 0 1 4 4c0 2-2 3-4 5s-3 4-5 4a4 4 0 0 1-4-4c0-2 2-3 4-5s3-4 5-4z"/><path d="M6 18l-2 2"/></svg>
     <span>Proteína</span>
   </button>
-  <button class="nav-btn" data-view="calorias" aria-selected="false">
+  <button class="nav-btn" role="tab" data-view="calorias" aria-selected="false">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2s-5 5.5-5 10a5 5 0 0 0 10 0c0-1.5-1-2.5-1-2.5s0 2-2 2-2-2.5-1-4S12 2 12 2z"/></svg>
     <span>Calorias</span>
   </button>
@@ -463,6 +464,7 @@ $('#stop').addEventListener('click', ()=>{
 });
 
 /* ========== contadores ========== */
+/* Design note: counters reset only manually (not date-based); not included in Export/Import (out of scope). */
 const CONTADOR_CFG = [
   { chave:'agua',     label:'Água',      unidade:'ml',   atalhos:[250,500] },
   { chave:'proteina', label:'Proteína',  unidade:'g',    atalhos:[20,40]   },
@@ -513,7 +515,7 @@ function contadorHTML(cfg){
       </div>
       <div class="counter-shortcuts">${atalhosHTML}</div>
       <div class="counter-manual">
-        <input type="number" inputmode="decimal" min="0" id="manual-${cfg.chave}" placeholder="Quantidade (${cfg.unidade})">
+        <input type="number" inputmode="decimal" min="0" id="manual-${cfg.chave}" placeholder="Quantidade (${cfg.unidade})" aria-label="Adicionar ${cfg.unidade} de ${cfg.label}">
         <button id="add-${cfg.chave}">Adicionar</button>
       </div>
       <button class="counter-reset" id="reset-${cfg.chave}">Resetar contador</button>
