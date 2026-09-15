@@ -134,6 +134,37 @@
   }
   .nav-btn svg{width:22px;height:22px}
   .nav-btn[aria-selected="true"]{color:var(--acc)}
+  .counter{padding:16px 16px 24px;display:flex;flex-direction:column;gap:16px}
+  .counter h1{margin:0;font-size:22px;letter-spacing:-.02em}
+  .counter-goal{display:flex;align-items:center;gap:8px;color:var(--dim);font-size:14px}
+  .counter-goal input{
+    width:100px;background:var(--card);border:1px solid var(--line);color:var(--txt);
+    border-radius:9px;padding:8px 10px;font:inherit;font-size:15px;
+  }
+  .counter-value{font-variant-numeric:tabular-nums;font-size:32px;font-weight:700;letter-spacing:-.02em}
+  .counter-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+  .counter-bar i{display:block;height:100%;width:0;background:var(--acc);border-radius:99px;transition:width .3s ease}
+  .counter-bar i.over{background:#ff4d4d}
+  .counter-status{color:var(--dim);font-size:14px;min-height:18px}
+  .counter-shortcuts{display:flex;gap:8px;flex-wrap:wrap}
+  .counter-shortcuts button{
+    background:var(--card);border:1px solid var(--line);color:var(--txt);
+    border-radius:12px;padding:10px 16px;font:inherit;font-size:14px;cursor:pointer;
+  }
+  .counter-shortcuts button:active{border-color:var(--acc);color:var(--acc)}
+  .counter-manual{display:flex;gap:8px}
+  .counter-manual input{
+    flex:1;background:var(--card);border:1px solid var(--line);color:var(--txt);
+    border-radius:9px;padding:10px;font:inherit;font-size:15px;
+  }
+  .counter-manual button{
+    background:var(--acc);border:1px solid var(--acc);color:#0f1218;font-weight:600;
+    border-radius:9px;padding:10px 18px;font:inherit;font-size:14px;cursor:pointer;
+  }
+  .counter-reset{
+    background:none;border:1px solid var(--line);color:var(--dim);
+    border-radius:12px;padding:12px 6px;font:inherit;font-size:14px;cursor:pointer;
+  }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -465,10 +496,60 @@ function salvarContadores(){
   }, 300);
 }
 
+function contadorHTML(cfg){
+  const atalhosHTML = cfg.atalhos.map(v =>
+    `<button data-add="${v}">+${v}${cfg.unidade}</button>`
+  ).join('');
+  return `
+    <div class="counter">
+      <h1>${cfg.label}</h1>
+      <label class="counter-goal">Meta diária (${cfg.unidade})
+        <input type="number" inputmode="decimal" min="0" id="meta-${cfg.chave}" value="${CONTADORES[cfg.chave].meta || ''}" placeholder="0">
+      </label>
+      <div>
+        <div class="counter-value" id="valor-${cfg.chave}"></div>
+        <div class="counter-bar"><i id="bar-${cfg.chave}"></i></div>
+        <p class="counter-status" id="status-${cfg.chave}"></p>
+      </div>
+      <div class="counter-shortcuts">${atalhosHTML}</div>
+      <div class="counter-manual">
+        <input type="number" inputmode="decimal" min="0" id="manual-${cfg.chave}" placeholder="Quantidade (${cfg.unidade})">
+        <button id="add-${cfg.chave}">Adicionar</button>
+      </div>
+      <button class="counter-reset" id="reset-${cfg.chave}">Resetar contador</button>
+    </div>`;
+}
+
+function renderContador(chave){
+  const cfg = CONTADOR_CFG.find(c => c.chave === chave);
+  const st = CONTADORES[chave];
+  const pct = st.meta > 0 ? Math.round(st.consumido / st.meta * 100) : 0;
+  $(`#valor-${chave}`).textContent = `${st.consumido} / ${st.meta || '—'} ${cfg.unidade}`;
+  const bar = $(`#bar-${chave}`);
+  bar.style.width = (st.meta > 0 ? Math.min(pct, 100) : 0) + '%';
+  bar.classList.toggle('over', st.meta > 0 && st.consumido > st.meta);
+  const status = $(`#status-${chave}`);
+  if(st.meta <= 0){
+    status.textContent = '';
+  } else if(st.consumido <= st.meta){
+    status.textContent = `Faltam ${st.meta - st.consumido}${cfg.unidade} · ${pct}% da meta`;
+  } else {
+    status.textContent = `Passou ${st.consumido - st.meta}${cfg.unidade} · ${pct}%`;
+  }
+}
+
+function montarContadores(){
+  CONTADOR_CFG.forEach(cfg=>{
+    document.getElementById(`view-${cfg.chave}`).innerHTML = contadorHTML(cfg);
+    renderContador(cfg.chave);
+  });
+}
+
 /* ========== início ========== */
 (async ()=>{
   carregar();
   carregarContadores();
+  montarContadores();
   try{
     const r = await fetch('./plano.json', {cache:'no-cache'});
     PLANO = await r.json();
