@@ -545,11 +545,48 @@ function montarContadores(){
   });
 }
 
+function ligarEventosContadores(){
+  CONTADOR_CFG.forEach(cfg=>{
+    const view = document.getElementById(`view-${cfg.chave}`);
+
+    view.querySelector(`#meta-${cfg.chave}`).addEventListener('input', e=>{
+      CONTADORES[cfg.chave].meta = Number(e.target.value) || 0;
+      salvarContadores();
+      renderContador(cfg.chave);
+    });
+
+    view.addEventListener('click', e=>{
+      const shortcut = e.target.closest('[data-add]');
+      if(shortcut){
+        CONTADORES[cfg.chave].consumido += Number(shortcut.dataset.add);
+        salvarContadores(); renderContador(cfg.chave);
+        navigator.vibrate?.(12);
+        return;
+      }
+      if(e.target.id === `add-${cfg.chave}`){
+        const input = view.querySelector(`#manual-${cfg.chave}`);
+        const valor = Number(input.value);
+        if(valor > 0){
+          CONTADORES[cfg.chave].consumido += valor;
+          input.value = '';
+          salvarContadores(); renderContador(cfg.chave);
+        }
+        return;
+      }
+      if(e.target.id === `reset-${cfg.chave}`){
+        CONTADORES[cfg.chave].consumido = 0;
+        salvarContadores(); renderContador(cfg.chave);
+      }
+    });
+  });
+}
+
 /* ========== início ========== */
 (async ()=>{
   carregar();
   carregarContadores();
   montarContadores();
+  ligarEventosContadores();
   try{
     const r = await fetch('./plano.json', {cache:'no-cache'});
     PLANO = await r.json();
