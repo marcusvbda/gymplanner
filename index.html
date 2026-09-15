@@ -431,9 +431,44 @@ $('#stop').addEventListener('click', ()=>{
   clearInterval(tick); tick = null; restam = 0; mostra(); $('#clock').classList.remove('run');
 });
 
+/* ========== contadores ========== */
+const CONTADOR_CFG = [
+  { chave:'agua',     label:'Água',      unidade:'ml',   atalhos:[250,500] },
+  { chave:'proteina', label:'Proteína',  unidade:'g',    atalhos:[20,40]   },
+  { chave:'calorias', label:'Calorias',  unidade:'kcal', atalhos:[200,500] },
+];
+
+const CHAVE_CONTADORES = 'contadores-v1';
+let CONTADORES = {};
+CONTADOR_CFG.forEach(c => CONTADORES[c.chave] = { meta:0, consumido:0 });
+
+function carregarContadores(){
+  try{
+    const v = localStorage.getItem(CHAVE_CONTADORES);
+    if(!v) return;
+    const d = JSON.parse(v);
+    CONTADOR_CFG.forEach(c=>{
+      const s = d[c.chave];
+      if(s){
+        CONTADORES[c.chave].meta = Number(s.meta) || 0;
+        CONTADORES[c.chave].consumido = Number(s.consumido) || 0;
+      }
+    });
+  }catch(e){}
+}
+
+let pendContadores;
+function salvarContadores(){
+  clearTimeout(pendContadores);
+  pendContadores = setTimeout(()=>{
+    try{ localStorage.setItem(CHAVE_CONTADORES, JSON.stringify(CONTADORES)); }catch(e){}
+  }, 300);
+}
+
 /* ========== início ========== */
 (async ()=>{
   carregar();
+  carregarContadores();
   try{
     const r = await fetch('./plano.json', {cache:'no-cache'});
     PLANO = await r.json();
