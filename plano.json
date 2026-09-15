@@ -1,0 +1,73 @@
+[
+  {
+    "id": "seg",
+    "dia": "Segunda",
+    "foco": "Peito · Ombro · Tríceps",
+    "cor": "#ff7a45",
+    "ex": [
+      { "nome": "Supino reto", "sets": "4×4–6", "icone": "supino" },
+      { "nome": "Supino inclinado", "sets": "3×6–8", "icone": "inclinado" },
+      { "nome": "Desenvolvimento", "sets": "3×6–8", "icone": "desenvolvimento" },
+      { "nome": "Elevação lateral", "sets": "3×12–15", "icone": "lateral" },
+      { "nome": "Tríceps corda", "sets": "3×8–12", "icone": "corda" },
+      { "nome": "Tríceps barra / acima da cabeça", "sets": "2×10–15", "icone": "tricepsTesta" }
+    ]
+  },
+  {
+    "id": "ter",
+    "dia": "Terça",
+    "foco": "Costas · Bíceps",
+    "cor": "#4da3ff",
+    "ex": [
+      { "nome": "Puxada alta ou barra fixa", "sets": "4×6–8", "icone": "puxada" },
+      { "nome": "Remada máquina ou barra", "sets": "4×6–8", "icone": "remada" },
+      { "nome": "Remada baixa", "sets": "3×8–10", "icone": "remadaBaixa" },
+      { "nome": "Face pull ou crucifixo inverso", "sets": "3×12–15", "icone": "facepull" },
+      { "nome": "Rosca direta", "sets": "3×8–10", "icone": "rosca" },
+      { "nome": "Rosca martelo", "sets": "3×10–12", "icone": "martelo" }
+    ]
+  },
+  {
+    "id": "qua",
+    "dia": "Quarta",
+    "foco": "Pernas · força",
+    "cor": "#a98bff",
+    "ex": [
+      { "nome": "Agachamento, hack ou leg press", "sets": "4×5–8", "icone": "agachamento" },
+      { "nome": "Stiff ou RDL", "sets": "3×6–8", "icone": "stiff" },
+      { "nome": "Cadeira extensora", "sets": "3×10–12", "icone": "extensora" },
+      { "nome": "Mesa flexora", "sets": "3×10–12", "icone": "flexora" },
+      { "nome": "Panturrilha", "sets": "4×8–12", "icone": "panturrilha" },
+      { "nome": "Abdômen", "sets": "3×10–15", "icone": "abdomen" }
+    ]
+  },
+  {
+    "id": "qui",
+    "dia": "Quinta",
+    "foco": "Superiores · hipertrofia",
+    "cor": "#35d493",
+    "ex": [
+      { "nome": "Supino inclinado", "sets": "3×8–12", "icone": "inclinado" },
+      { "nome": "Chest press", "sets": "3×8–12", "icone": "chestPress" },
+      { "nome": "Puxada alta", "sets": "3×8–12", "icone": "puxada" },
+      { "nome": "Remada sentada", "sets": "3×8–12", "icone": "remadaBaixa" },
+      { "nome": "Elevação lateral", "sets": "3×12–20", "icone": "lateral" },
+      { "nome": "Rosca bíceps", "sets": "3×10–15", "icone": "rosca" },
+      { "nome": "Tríceps pulley", "sets": "3×10–15", "icone": "corda" }
+    ]
+  },
+  {
+    "id": "sex",
+    "dia": "Sexta",
+    "foco": "Pernas · hipertrofia",
+    "cor": "#ffc247",
+    "ex": [
+      { "nome": "Hack squat ou leg press", "sets": "4×8–12", "icone": "legPress" },
+      { "nome": "Stiff ou RDL", "sets": "3×8–10", "icone": "stiff" },
+      { "nome": "Extensora", "sets": "3×12–15", "icone": "extensora" },
+      { "nome": "Flexora", "sets": "3×10–15", "icone": "flexora" },
+      { "nome": "Panturrilha", "sets": "4×10–15", "icone": "panturrilha" },
+      { "nome": "Abdômen", "sets": "3×10–15", "icone": "abdomen" }
+    ]
+  }
+]
